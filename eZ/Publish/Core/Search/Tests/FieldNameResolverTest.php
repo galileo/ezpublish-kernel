@@ -762,6 +762,49 @@ class FieldNameResolverTest extends TestCase
     }
 
     /**
+     * @group justme
+     */
+    public function testReturnSearchFieldForCustomFields()
+    {
+        $mockedFieldNameResolver = $this->getMockedFieldNameResolver(array('getSearchableFieldMap'));
+        $mockedFieldNameResolver->expects($this->once())
+            ->method('getSearchableFieldMap')
+            ->with()
+            ->willReturn(array(
+                'content_type_identifier_1' => array(
+                    'field_definition_identifier_1' => array(
+                        'field_definition_id' => 'field_definition_id_1',
+                        'field_type_identifier' => 'field_type_identifier_1',
+                    ),
+                ),
+                'content_type_identifier_2' => array(
+                    'field_definition_identifier_2' => array(
+                        'field_definition_id' => 'field_definition_id_2',
+                        'field_type_identifier' => 'field_type_identifier_2',
+                    ),
+                ),
+            ));
+
+        $this->fieldRegistryMock
+            ->expects($this->once())
+            ->method('getType')
+            ->with('field_type_identifier')
+            ->will(
+                $this->returnValue(null)
+            );
+
+
+//        $mockedFieldNameResolver->expects($this->once())
+//            ->method('getIndexFieldName')
+//            ->willReturn([]);
+
+
+        $criterion = $this->getCriterionMock();
+
+        $fieldNames = $mockedFieldNameResolver->getFieldNames($criterion, 'field_definition_identifier_1', 'field_type_identifier_1', 'name');
+    }
+
+    /**
      * @param array $methods
      *
      * @return \eZ\Publish\Core\Search\Common\FieldNameResolver|\PHPUnit_Framework_MockObject_MockObject
